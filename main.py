@@ -23,6 +23,8 @@ class Server(BaseHTTPRequestHandler):
     <body>
     <p>
     Hi from server at {time.asctime() + (' !' if self.hostname is None else ' from ' + self.hostname + ' !')}
+    <br></br>
+    Counter: 1
     <p>
     </body>
 </html>"""
