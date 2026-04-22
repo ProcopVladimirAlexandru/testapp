@@ -33,15 +33,15 @@ jobs:
           echo Add other actions to build,
           echo test, and deploy your project.
 
+      - name: Get image version
+        id: get_image_version
+        run: echo "image_version=$(cat .version)" >> $GITHUB_OUTPUT
+
       - name: Log in to Docker Hub
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-      - name: Get image version
-        id: get_image_version
-        run: echo "image_version=${cat .version}" >> $GITHUB_OUTPUT
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
