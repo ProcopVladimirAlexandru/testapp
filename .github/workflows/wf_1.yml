@@ -39,11 +39,15 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Get image version
+        id: get_image_version
+        run: echo "image_version=${cat .version}" >> $GITHUB_OUTPUT
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: vlalex/testapp
+          images: vlalex/testapp:${{steps.get_image_version.outputs.image_version}}
 
       - name: Build and push Docker image
         id: push
