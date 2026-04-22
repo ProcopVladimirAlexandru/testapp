@@ -50,8 +50,9 @@ jobs:
           images: vlalex/testapp
           labels: |
             org.opencontainers.image.version: ${{steps.get_image_version.outputs.image_version}}
+          flavor: |
+            latest=false
           tags: |
-            type=semver,pattern={{version}},value=v${{steps.get_image_version.outputs.image_version}}
             type=semver,pattern={{version}},value=${{steps.get_image_version.outputs.image_version}}
 
       - name: Build and push Docker image
