@@ -47,7 +47,12 @@ jobs:
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: vlalex/testapp:${{steps.get_image_version.outputs.image_version}}
+          images: vlalex/testapp
+          labels: |
+            org.opencontainers.image.version: ${{steps.get_image_version.outputs.image_version}}
+          tags: |
+            type=semver,pattern={{version}},value=v${{steps.get_image_version.outputs.image_version}}
+            type=semver,pattern={{version}},value=${{steps.get_image_version.outputs.image_version}}
 
       - name: Build and push Docker image
         id: push
