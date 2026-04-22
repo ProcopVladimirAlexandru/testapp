@@ -77,7 +77,7 @@ jobs:
         with:
           valueFile: 'apps/overlays/homelab-dev/testapp/version.yaml'
           propertyPath: 'spec.template.spec.containers[0].image'
-          value: ${{ steps.meta.outputs.tags[0] }}
+          value: ${{ steps.meta.outputs.tags }}
           repository: ProcopVladimirAlexandru/homelab-gitops
           branch: deployment/${{ steps.get_image_version.outputs.image_version }}
           targetBranch: master
