@@ -63,7 +63,7 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Extract full image id
         run: |
-          echo ${{ steps.meta.outputs }}
+          echo ${{ steps.meta.outputs.tags }}
 
       # - name: Checkout Target Repository
       #   uses: actions/checkout@v6
