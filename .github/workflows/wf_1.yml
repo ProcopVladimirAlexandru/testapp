@@ -37,6 +37,32 @@ jobs:
         id: get_image_version
         run: echo "image_version=$(cat .version)" >> $GITHUB_OUTPUT
 
+
+
+      - name: Checkout Target Repository
+        uses: actions/checkout@v3
+        with:
+          repository: ProcopVladimirAlexandru/homelab-gitops
+          path: infrastructure
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update Image Version in the related Kustomize values.yaml
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          valueFile: 'apps/overlays/homelab-dev/testapp/version.yaml'
+          propertyPath: 'spec.template.spec.containers[0].image'
+          value: test # ${{ steps.meta.outputs.tags[0] }}
+          repository: ProcopVladimirAlexandru/homelab-gitops
+          branch: deployment/${{ steps.get_image_version.outputs.image_version }}
+          targetBranch: master
+          createPR: true
+          message: 'Update Image Version to ${{ steps.get_image_version.outputs.image_version }}'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          workDir: infrastructure
+
+
+
+
       - name: Log in to Docker Hub
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
         with:
@@ -65,23 +91,4 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      - name: Checkout Target Repository
-        uses: actions/checkout@v3
-        with:
-          repository: ProcopVladimirAlexandru/homelab-gitops
-          path: infrastructure
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Update Image Version in the related Kustomize values.yaml
-        uses: fjogeleit/yaml-update-action@main
-        with:
-          valueFile: 'apps/overlays/homelab-dev/testapp/version.yaml'
-          propertyPath: 'spec.template.spec.containers[0].image'
-          value: ${{ steps.meta.outputs.tags[0] }}
-          repository: ProcopVladimirAlexandru/homelab-gitops
-          branch: deployment/${{ steps.get_image_version.outputs.image_version }}
-          targetBranch: master
-          createPR: true
-          message: 'Update Image Version to ${{ steps.get_image_version.outputs.image_version }}'
-          token: ${{ secrets.GITHUB_TOKEN }}
-          workDir: infrastructure
+# TODO return the CICD image update steps here
