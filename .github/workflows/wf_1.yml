@@ -21,6 +21,7 @@ jobs:
       pull-requests: write
       contents: write
       issues: write
+      actions: write
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -61,7 +62,7 @@ jobs:
           targetBranch: master
           createPR: true
           message: 'Update Image Version to ${{ steps.get_image_version.outputs.image_version }}'
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.TEST_DEPLOYMENT_PAT }}
           workDir: infrastructure
 
 
