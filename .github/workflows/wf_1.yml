@@ -42,32 +42,6 @@ jobs:
         id: get_image_version
         run: echo "image_version=$(cat .version)" >> $GITHUB_OUTPUT
 
-
-
-      - name: Checkout Target Repository
-        uses: actions/checkout@v6
-        with:
-          repository: ProcopVladimirAlexandru/homelab-gitops
-          path: infrastructure
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Update Image Version in the related Kustomize values.yaml
-        uses: fjogeleit/yaml-update-action@main
-        with:
-          valueFile: 'apps/overlays/homelab-dev/testapp/version.yaml'
-          propertyPath: 'spec.template.spec.containers[0].image'
-          value: test # ${{ steps.meta.outputs.tags[0] }}
-          repository: ProcopVladimirAlexandru/homelab-gitops
-          branch: deployment/${{ steps.get_image_version.outputs.image_version }}
-          targetBranch: master
-          createPR: true
-          message: 'Update Image Version to ${{ steps.get_image_version.outputs.image_version }}'
-          token: ${{ secrets.TEST_DEPLOYMENT_ACTIONS_SECRET }}
-          workDir: infrastructure
-
-
-
-
       - name: Log in to Docker Hub
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
         with:
@@ -86,14 +60,34 @@ jobs:
           tags: |
             type=semver,pattern={{version}},value=${{ steps.get_image_version.outputs.image_version }}
 
-      - name: Build and push Docker image
-        id: push
-        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+      - name: Checkout Target Repository
+        uses: actions/checkout@v6
         with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          repository: ProcopVladimirAlexandru/homelab-gitops
+          path: infrastructure
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-# TODO return the CICD image update steps here
+      - name: Update Image Version in the related Kustomize values.yaml
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          valueFile: 'apps/overlays/homelab-dev/testapp/version.yaml'
+          propertyPath: 'spec.template.spec.containers[0].image'
+          value: ${{ steps.meta.outputs.tags[0] }}
+          repository: ProcopVladimirAlexandru/homelab-gitops
+          branch: deployment/${{ steps.get_image_version.outputs.image_version }}
+          targetBranch: master
+          createPR: true
+          message: 'Update Image Version to ${{ steps.get_image_version.outputs.image_version }}'
+          token: ${{ secrets.TEST_DEPLOYMENT_ACTIONS_SECRET }}
+          workDir: infrastructure
+
+
+      # - name: Build and push Docker image
+      #   id: push
+      #   uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+      #   with:
+      #     context: .
+      #     file: ./Dockerfile
+      #     push: true
+      #     tags: ${{ steps.meta.outputs.tags }}
+      #     labels: ${{ steps.meta.outputs.labels }}
