@@ -61,30 +61,30 @@ jobs:
             type=semver,pattern={{version}},value=${{ steps.get_image_version.outputs.image_version }}
 
       # Runs a set of commands using the runners shell
-      - name: Extract full image id
-        run: |
-          echo ${{ steps.meta.outputs.tags }}
+      # - name: Extract full image id
+      #   run: |
+      #     echo ${{ steps.meta.outputs.tags }}
 
-      # - name: Checkout Target Repository
-      #   uses: actions/checkout@v6
-      #   with:
-      #     repository: ProcopVladimirAlexandru/homelab-gitops
-      #     path: infrastructure
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #
-      # - name: Update Image Version in the related Kustomize values.yaml
-      #   uses: fjogeleit/yaml-update-action@main
-      #   with:
-      #     valueFile: 'apps/overlays/homelab-dev/testapp/version.yaml'
-      #     propertyPath: 'spec.template.spec.containers[0].image'
-      #     value: ${{ steps.meta.outputs.tags[0] }}
-      #     repository: ProcopVladimirAlexandru/homelab-gitops
-      #     branch: deployment/${{ steps.get_image_version.outputs.image_version }}
-      #     targetBranch: master
-      #     createPR: true
-      #     message: 'Update Image Version to ${{ steps.get_image_version.outputs.image_version }}'
-      #     token: ${{ secrets.TEST_DEPLOYMENT_ACTIONS_SECRET }}
-      #     workDir: infrastructure
+      - name: Checkout Target Repository
+        uses: actions/checkout@v6
+        with:
+          repository: ProcopVladimirAlexandru/homelab-gitops
+          path: infrastructure
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Update Image Version in the related Kustomize values.yaml
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          valueFile: 'apps/overlays/homelab-dev/testapp/version.yaml'
+          propertyPath: 'spec.template.spec.containers[0].image'
+          value: ${{ steps.meta.outputs.tags[0] }}
+          repository: ProcopVladimirAlexandru/homelab-gitops
+          branch: deployment/${{ steps.get_image_version.outputs.image_version }}
+          targetBranch: master
+          createPR: true
+          message: 'Update Image Version to ${{ steps.get_image_version.outputs.image_version }}'
+          token: ${{ secrets.TEST_DEPLOYMENT_ACTIONS_SECRET }}
+          workDir: infrastructure
 
 
       # - name: Build and push Docker image
